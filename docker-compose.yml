@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres:18.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: verySecretPassword
+      POSTGRES_USER: administrator
+      POSTGRES_DB: todo
+    volumes:
+      - pgdata:/var/lib/postgresql  # named volume, container controls permissions
+
+  app:
+    build: .
+    restart: always
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://administrator:verySecretPassword@database:5432/todo"
+    ports:
+      - "6400:6400"
+    depends_on:
+      - database
+
+volumes:
+  pgdata:
